@@ -48,7 +48,7 @@ class OrderPage extends GetView<OrderController> {
 
   Widget _buildHeader() {
     final authController = Get.find<AuthController>();
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -73,9 +73,11 @@ class OrderPage extends GetView<OrderController> {
             children: [
               Obx(() {
                 final isLoggedIn = authController.isLoggedIn;
-                
+
                 return Material(
-                  color: isLoggedIn ? AppColors.primarySurface : AppColors.infoSurface,
+                  color: isLoggedIn
+                      ? AppColors.primarySurface
+                      : AppColors.infoSurface,
                   borderRadius: BorderRadius.circular(12),
                   child: InkWell(
                     onTap: () {
@@ -99,7 +101,9 @@ class OrderPage extends GetView<OrderController> {
                         children: [
                           Icon(
                             isLoggedIn ? Icons.dashboard : Icons.login,
-                            color: isLoggedIn ? AppColors.primary : AppColors.info,
+                            color: isLoggedIn
+                                ? AppColors.primary
+                                : AppColors.info,
                             size: 20,
                           ),
                           const SizedBox(width: 8),
@@ -108,7 +112,9 @@ class OrderPage extends GetView<OrderController> {
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: isLoggedIn ? AppColors.primary : AppColors.info,
+                              color: isLoggedIn
+                                  ? AppColors.primary
+                                  : AppColors.info,
                             ),
                           ),
                         ],
@@ -120,7 +126,7 @@ class OrderPage extends GetView<OrderController> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Logo and title
           Hero(
             tag: 'cafe_logo',
@@ -139,7 +145,11 @@ class OrderPage extends GetView<OrderController> {
                 ],
               ),
               child: Center(
-                child: const Icon(Icons.local_cafe, size: 50, color: AppColors.white),
+                child: const Icon(
+                  Icons.local_cafe,
+                  size: 50,
+                  color: AppColors.white,
+                ),
               ),
             ),
           ),
@@ -157,7 +167,11 @@ class OrderPage extends GetView<OrderController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.restaurant_menu, size: 14, color: AppColors.textSecondary),
+              Icon(
+                Icons.restaurant_menu,
+                size: 14,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 4),
               Text(
                 'Food & Drinks',
@@ -178,39 +192,27 @@ class OrderPage extends GetView<OrderController> {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Obx(() {
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: controller.categories.length,
-          itemBuilder: (context, index) {
-            final category = controller.categories[index];
-            final isSelected = controller.selectedCategory == category;
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: controller.categories.length,
+        itemBuilder: (context, index) {
+          final category = controller.categories[index];
+          final isSelected = controller.selectedCategory == category;
 
-            return Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: _buildCategoryChip(
-                label: category,
-                isSelected: isSelected,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  controller.selectCategory(category);
-                },
-              ),
-            );
-          },
-        );
-      }),
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: _buildCategoryChip(
+              label: category,
+              isSelected: isSelected,
+              onTap: () {
+                HapticFeedback.selectionClick();
+                controller.selectCategory(category);
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -252,18 +254,18 @@ class OrderPage extends GetView<OrderController> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (isSelected) ...[
-                    Icon(
-                      Icons.check_circle,
-                      size: 16,
-                      color: AppColors.white,
-                    ),
+                    Icon(Icons.check_circle, size: 16, color: AppColors.white),
                     const SizedBox(width: 6),
                   ],
                   Text(
                     label,
                     style: GoogleFonts.poppins(
-                      color: isSelected ? AppColors.white : AppColors.textPrimary,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color: isSelected
+                          ? AppColors.white
+                          : AppColors.textPrimary,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                       fontSize: 13,
                       letterSpacing: 0.2,
                     ),
@@ -369,7 +371,10 @@ class OrderPage extends GetView<OrderController> {
           const SizedBox(height: 8),
           Text(
             'Coba cari dengan kata kunci lain',
-            style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textSecondary),
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
