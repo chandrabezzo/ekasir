@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
+import '../../app/constant/app_colors.dart';
+
 import 'order_controller.dart';
 import '../../shared/models/product_model.dart';
 import 'widgets/product_detail_modal.dart';
@@ -22,7 +24,7 @@ class OrderPage extends GetView<OrderController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -53,7 +55,7 @@ class OrderPage extends GetView<OrderController> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.orange[50]!, Colors.white],
+          colors: [AppColors.secondarySurface, AppColors.white],
         ),
         boxShadow: [
           BoxShadow(
@@ -73,7 +75,7 @@ class OrderPage extends GetView<OrderController> {
                 final isLoggedIn = authController.isLoggedIn;
                 
                 return Material(
-                  color: isLoggedIn ? Colors.purple[50] : Colors.blue[50],
+                  color: isLoggedIn ? AppColors.primarySurface : AppColors.infoSurface,
                   borderRadius: BorderRadius.circular(12),
                   child: InkWell(
                     onTap: () {
@@ -97,7 +99,7 @@ class OrderPage extends GetView<OrderController> {
                         children: [
                           Icon(
                             isLoggedIn ? Icons.dashboard : Icons.login,
-                            color: isLoggedIn ? Colors.purple[700] : Colors.blue[700],
+                            color: isLoggedIn ? AppColors.primary : AppColors.info,
                             size: 20,
                           ),
                           const SizedBox(width: 8),
@@ -106,7 +108,7 @@ class OrderPage extends GetView<OrderController> {
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: isLoggedIn ? Colors.purple[700] : Colors.blue[700],
+                              color: isLoggedIn ? AppColors.primary : AppColors.info,
                             ),
                           ),
                         ],
@@ -127,19 +129,17 @@ class OrderPage extends GetView<OrderController> {
               height: 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [Colors.orange[400]!, Colors.orange[600]!],
-                ),
+                gradient: AppColors.orangeGradient,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.orange.withValues(alpha: 0.3),
+                    color: AppColors.secondary.withValues(alpha: 0.3),
                     blurRadius: 15,
                     spreadRadius: 2,
                   ),
                 ],
               ),
               child: Center(
-                child: Icon(Icons.local_cafe, size: 50, color: Colors.white),
+                child: const Icon(Icons.local_cafe, size: 50, color: AppColors.white),
               ),
             ),
           ),
@@ -149,7 +149,7 @@ class OrderPage extends GetView<OrderController> {
             style: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.textPrimary,
               letterSpacing: 0.5,
             ),
           ),
@@ -157,13 +157,13 @@ class OrderPage extends GetView<OrderController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.restaurant_menu, size: 14, color: Colors.grey[600]),
+              Icon(Icons.restaurant_menu, size: 14, color: AppColors.textSecondary),
               const SizedBox(width: 4),
               Text(
                 'Food & Drinks',
                 style: GoogleFonts.poppins(
                   fontSize: 13,
-                  color: Colors.grey[600],
+                  color: AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -176,36 +176,103 @@ class OrderPage extends GetView<OrderController> {
 
   Widget _buildCategoryTabs() {
     return Container(
-      height: 56,
+      height: 60,
       padding: const EdgeInsets.symmetric(vertical: 8),
-      color: Colors.white,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: controller.categories.length,
-        itemBuilder: (context, index) {
-          final category = controller.categories[index];
-          final isSelected = controller.selectedCategory == category;
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Obx(() {
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: controller.categories.length,
+          itemBuilder: (context, index) {
+            final category = controller.categories[index];
+            final isSelected = controller.selectedCategory == category;
 
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: FilterChip(
-              label: Text(category),
-              selected: isSelected,
-              onSelected: (_) => controller.selectCategory(category),
-              backgroundColor: Colors.white,
-              selectedColor: Colors.purple,
-              labelStyle: GoogleFonts.poppins(
-                color: isSelected ? Colors.white : Colors.black87,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            return Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: _buildCategoryChip(
+                label: category,
+                isSelected: isSelected,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  controller.selectCategory(category);
+                },
               ),
-              side: BorderSide(
-                color: isSelected ? Colors.purple : Colors.grey[300]!,
+            );
+          },
+        );
+      }),
+    );
+  }
+
+  Widget _buildCategoryChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: isSelected ? AppColors.purpleGradient : null,
+              color: isSelected ? null : AppColors.gray50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected ? AppColors.primary : AppColors.border,
+                width: isSelected ? 2 : 1.5,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
             ),
-          );
-        },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isSelected) ...[
+                    Icon(
+                      Icons.check_circle,
+                      size: 16,
+                      color: AppColors.white,
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      color: isSelected ? AppColors.white : AppColors.textPrimary,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontSize: 13,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -213,14 +280,14 @@ class OrderPage extends GetView<OrderController> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.white,
+      color: AppColors.white,
       child: TextField(
         onChanged: controller.search,
         decoration: InputDecoration(
           hintText: 'Cari Disini',
-          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+          prefixIcon: const Icon(Icons.search, color: AppColors.textTertiary),
           filled: true,
-          fillColor: Colors.grey[100],
+          fillColor: AppColors.gray100,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -282,12 +349,12 @@ class OrderPage extends GetView<OrderController> {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.orange[50],
+              color: AppColors.secondarySurface,
             ),
             child: Icon(
               Icons.search_off_rounded,
               size: 80,
-              color: Colors.orange[300],
+              color: AppColors.secondary.withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 24),
@@ -296,13 +363,13 @@ class OrderPage extends GetView<OrderController> {
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Coba cari dengan kata kunci lain',
-            style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
+            style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textSecondary),
           ),
         ],
       ),

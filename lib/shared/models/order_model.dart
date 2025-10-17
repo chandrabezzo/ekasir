@@ -7,6 +7,9 @@ class OrderModel {
   final List<OrderItemModel> items;
   final String customerName;
   final String customerPhone;
+  final String? outletName;
+  final String? tableNumber;
+  final String? orderType; // Dine-in, Takeaway, Delivery
   final double subtotal;
   final double tax;
   final double discount;
@@ -22,6 +25,9 @@ class OrderModel {
     required this.items,
     required this.customerName,
     required this.customerPhone,
+    this.outletName,
+    this.tableNumber,
+    this.orderType,
     required this.subtotal,
     required this.tax,
     required this.discount,
@@ -40,6 +46,9 @@ class OrderModel {
     List<OrderItemModel>? items,
     String? customerName,
     String? customerPhone,
+    String? outletName,
+    String? tableNumber,
+    String? orderType,
     double? subtotal,
     double? tax,
     double? discount,
@@ -55,6 +64,9 @@ class OrderModel {
       items: items ?? this.items,
       customerName: customerName ?? this.customerName,
       customerPhone: customerPhone ?? this.customerPhone,
+      outletName: outletName ?? this.outletName,
+      tableNumber: tableNumber ?? this.tableNumber,
+      orderType: orderType ?? this.orderType,
       subtotal: subtotal ?? this.subtotal,
       tax: tax ?? this.tax,
       discount: discount ?? this.discount,
@@ -75,6 +87,9 @@ class OrderModel {
           .toList(),
       customerName: json['customerName'] as String,
       customerPhone: json['customerPhone'] as String,
+      outletName: json['outletName'] as String?,
+      tableNumber: json['tableNumber'] as String?,
+      orderType: json['orderType'] as String?,
       subtotal: (json['subtotal'] as num).toDouble(),
       tax: (json['tax'] as num).toDouble(),
       discount: (json['discount'] as num).toDouble(),
@@ -98,6 +113,9 @@ class OrderModel {
       'items': items.map((item) => item.toJson()).toList(),
       'customerName': customerName,
       'customerPhone': customerPhone,
+      'outletName': outletName,
+      'tableNumber': tableNumber,
+      'orderType': orderType,
       'subtotal': subtotal,
       'tax': tax,
       'discount': discount,

@@ -61,14 +61,14 @@ class OrderController extends GetxController {
   void _loadMockProducts() {
     _isLoading.value = true;
     
-    // Mock data based on the images
+    // Mock data with real food images
     _allProducts.value = [
       ProductModel(
         id: '1',
         name: 'Nasi Goreng Spesial',
         description: 'Nasi goreng telur, baso, sosis, dadar telur',
         price: 19000,
-        imageUrl: 'https://via.placeholder.com/150',
+        imageUrl: 'https://images.unsplash.com/photo-1603088775058-7c9cf0e43378?w=400&h=400&fit=crop',
         category: 'Makanan',
       ),
       ProductModel(
@@ -76,7 +76,7 @@ class OrderController extends GetxController {
         name: 'Tahu Asin Garam',
         description: 'Tahu goreng dengan bumbu garam',
         price: 14000,
-        imageUrl: 'https://via.placeholder.com/150',
+        imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop',
         category: 'Makanan',
       ),
       ProductModel(
@@ -84,7 +84,7 @@ class OrderController extends GetxController {
         name: 'Kopi Susu',
         description: 'Kopi susu gula aren',
         price: 15000,
-        imageUrl: 'https://via.placeholder.com/150',
+        imageUrl: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop',
         category: 'Minuman Panas',
       ),
       ProductModel(
@@ -92,7 +92,7 @@ class OrderController extends GetxController {
         name: 'Es Teh Manis',
         description: 'Teh manis dingin segar',
         price: 8000,
-        imageUrl: 'https://via.placeholder.com/150',
+        imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=400&fit=crop',
         category: 'Minuman Dingin',
       ),
       ProductModel(
@@ -100,7 +100,7 @@ class OrderController extends GetxController {
         name: 'Pisang Goreng',
         description: 'Pisang goreng crispy',
         price: 10000,
-        imageUrl: 'https://via.placeholder.com/150',
+        imageUrl: 'https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=400&h=400&fit=crop',
         category: 'Cemilan',
       ),
       ProductModel(
@@ -108,7 +108,79 @@ class OrderController extends GetxController {
         name: 'Mie Goreng',
         description: 'Mie goreng spesial dengan telur',
         price: 17000,
-        imageUrl: 'https://via.placeholder.com/150',
+        imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&h=400&fit=crop',
+        category: 'Makanan',
+      ),
+      ProductModel(
+        id: '7',
+        name: 'Sate Ayam',
+        description: 'Sate ayam bumbu kacang dengan lontong',
+        price: 22000,
+        imageUrl: 'https://images.unsplash.com/photo-1529563021893-cc83c992d75d?w=400&h=400&fit=crop',
+        category: 'Makanan',
+      ),
+      ProductModel(
+        id: '8',
+        name: 'Cappuccino',
+        description: 'Cappuccino dengan foam art premium',
+        price: 18000,
+        imageUrl: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=400&fit=crop',
+        category: 'Minuman Panas',
+      ),
+      ProductModel(
+        id: '9',
+        name: 'Es Jeruk',
+        description: 'Jus jeruk segar dengan es batu',
+        price: 12000,
+        imageUrl: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=400&fit=crop',
+        category: 'Minuman Dingin',
+      ),
+      ProductModel(
+        id: '10',
+        name: 'French Fries',
+        description: 'Kentang goreng crispy dengan saus',
+        price: 15000,
+        imageUrl: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=400&fit=crop',
+        category: 'Cemilan',
+      ),
+      ProductModel(
+        id: '11',
+        name: 'Ayam Goreng Kremes',
+        description: 'Ayam goreng dengan kremesan renyah',
+        price: 25000,
+        imageUrl: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&h=400&fit=crop',
+        category: 'Makanan',
+      ),
+      ProductModel(
+        id: '12',
+        name: 'Teh Tarik Panas',
+        description: 'Teh tarik Malaysia yang creamy',
+        price: 10000,
+        imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&h=400&fit=crop',
+        category: 'Minuman Panas',
+      ),
+      ProductModel(
+        id: '13',
+        name: 'Milkshake Coklat',
+        description: 'Milkshake coklat dengan whipped cream',
+        price: 20000,
+        imageUrl: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&h=400&fit=crop',
+        category: 'Minuman Dingin',
+      ),
+      ProductModel(
+        id: '14',
+        name: 'Risoles Mayo',
+        description: 'Risoles isi mayo, sayur, dan sosis',
+        price: 8000,
+        imageUrl: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=400&h=400&fit=crop',
+        category: 'Cemilan',
+      ),
+      ProductModel(
+        id: '15',
+        name: 'Burger Ayam',
+        description: 'Burger ayam crispy dengan keju dan sayuran',
+        price: 28000,
+        imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=400&fit=crop',
         category: 'Makanan',
       ),
     ];

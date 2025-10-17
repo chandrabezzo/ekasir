@@ -29,8 +29,20 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>ekasir</title>
+  <title>Kampung Kanyaah Cafe - eKasir</title>
   <link rel="manifest" href="manifest.json">
+  
+  <!-- GitHub Pages redirect handling for client-side routing -->
+  <script>
+    // Check if we were redirected from 404.html
+    (function(){
+      var redirect = sessionStorage.redirect;
+      delete sessionStorage.redirect;
+      if (redirect && redirect != location.href) {
+        history.replaceState(null, null, redirect);
+      }
+    })();
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
