@@ -199,7 +199,8 @@ class OrderPage extends GetView<OrderController> {
         itemBuilder: (context, index) {
           return Obx(() {
             final category = controller.categories[index];
-            final isSelected = controller.selectedCategory == category;
+            final isSelected = controller.isCategorySelected(category);
+
             return Padding(
               padding: const EdgeInsets.only(right: 10),
               child: _buildCategoryChip(

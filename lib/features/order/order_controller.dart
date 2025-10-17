@@ -8,7 +8,7 @@ class OrderController extends GetxController {
   final RxList<ProductModel> _allProducts = <ProductModel>[].obs;
   final RxList<ProductModel> _filteredProducts = <ProductModel>[].obs;
   final RxList<CartItemModel> _cartItems = <CartItemModel>[].obs;
-  final RxString _selectedCategory = 'Semua'.obs;
+  final RxList<String> _selectedCategories = <String>['Semua'].obs;
   final RxString _searchQuery = ''.obs;
   final RxBool _isLoading = false.obs;
 
@@ -20,9 +20,14 @@ class OrderController extends GetxController {
   // Getters
   List<ProductModel> get filteredProducts => _filteredProducts;
   List<CartItemModel> get cartItems => _cartItems;
-  String get selectedCategory => _selectedCategory.value;
+  List<String> get selectedCategories => _selectedCategories;
   int get cartItemCount => _cartItems.fold(0, (sum, item) => sum + item.quantity);
   bool get isLoading => _isLoading.value;
+  
+  // Check if a category is selected
+  bool isCategorySelected(String category) {
+    return _selectedCategories.contains(category);
+  }
 
   // Categories
   final List<String> categories = [
@@ -189,9 +194,27 @@ class OrderController extends GetxController {
     _isLoading.value = false;
   }
 
-  // Category selection
+  // Category selection (multiple)
   void selectCategory(String category) {
-    _selectedCategory.value = category;
+    if (category == 'Semua') {
+      // If "Semua" is clicked, clear all selections and select only "Semua"
+      _selectedCategories.value = ['Semua'];
+    } else {
+      // Remove "Semua" if it's selected
+      _selectedCategories.remove('Semua');
+      
+      // Toggle the category
+      if (_selectedCategories.contains(category)) {
+        _selectedCategories.remove(category);
+        
+        // If no categories are selected, default to "Semua"
+        if (_selectedCategories.isEmpty) {
+          _selectedCategories.add('Semua');
+        }
+      } else {
+        _selectedCategories.add(category);
+      }
+    }
     _filterProducts();
   }
 
@@ -204,11 +227,15 @@ class OrderController extends GetxController {
   // Filter products based on category and search
   void _filterProducts() {
     var products = _allProducts.where((product) {
-      final matchesCategory = _selectedCategory.value == 'Semua' ||
-          product.category == _selectedCategory.value;
+      // Check if product matches selected categories
+      final matchesCategory = _selectedCategories.contains('Semua') ||
+          _selectedCategories.contains(product.category);
+      
+      // Check if product matches search query
       final matchesSearch = _searchQuery.value.isEmpty ||
           product.name.toLowerCase().contains(_searchQuery.value.toLowerCase()) ||
           product.description.toLowerCase().contains(_searchQuery.value.toLowerCase());
+      
       return matchesCategory && matchesSearch;
     }).toList();
 
