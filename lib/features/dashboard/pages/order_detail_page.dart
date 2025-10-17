@@ -12,8 +12,8 @@ class OrderDetailPage extends StatelessWidget {
   OrderDetailPage({super.key});
 
   static const idKey = 'id';
-  static const routeName = '/order/:$idKey';
-  static String route(String id) => routeName.replaceFirst(idKey, id);
+  static const routeName = '/order/:id';
+  static String route(String id) => '/order/$id';
 
   final parameters = Get.parameters;
   String get orderId => parameters[idKey]!;

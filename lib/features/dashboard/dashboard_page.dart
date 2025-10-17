@@ -301,12 +301,12 @@ class DashboardPage extends GetView<DashboardController> {
           ),
         ],
       ),
-      child: Obx(() {
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: tabs.length,
-          itemBuilder: (context, index) {
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: tabs.length,
+        itemBuilder: (context, index) {
+          return Obx(() {
             final tab = tabs[index];
             final isSelected = controller.selectedTab == tab['id'];
             final badge = tab['badge'] as int?;
@@ -347,7 +347,9 @@ class DashboardPage extends GetView<DashboardController> {
                           Text(
                             tab['label'] as String,
                             style: GoogleFonts.poppins(
-                              color: isSelected ? AppColors.white : AppColors.textPrimary,
+                              color: isSelected
+                                  ? AppColors.white
+                                  : AppColors.textPrimary,
                               fontWeight: isSelected
                                   ? FontWeight.w600
                                   : FontWeight.w500,
@@ -363,7 +365,9 @@ class DashboardPage extends GetView<DashboardController> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.white : AppColors.primary,
+                                color: isSelected
+                                    ? AppColors.white
+                                    : AppColors.primary,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
@@ -385,9 +389,9 @@ class DashboardPage extends GetView<DashboardController> {
                 ),
               ),
             );
-          },
-        );
-      }),
+          });
+        },
+      ),
     );
   }
 
@@ -568,7 +572,10 @@ class DashboardPage extends GetView<DashboardController> {
                 children: [
                   if (order.outletName != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(6),
@@ -592,7 +599,10 @@ class DashboardPage extends GetView<DashboardController> {
                     ),
                   if (order.tableNumber != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.green[50],
                         borderRadius: BorderRadius.circular(6),
@@ -601,7 +611,11 @@ class DashboardPage extends GetView<DashboardController> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.table_restaurant, size: 12, color: Colors.green[700]),
+                          Icon(
+                            Icons.table_restaurant,
+                            size: 12,
+                            color: Colors.green[700],
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             order.tableNumber!,
@@ -616,21 +630,27 @@ class DashboardPage extends GetView<DashboardController> {
                     ),
                   if (order.orderType != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.orange[50],
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.orange[200]!, width: 1),
+                        border: Border.all(
+                          color: Colors.orange[200]!,
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            order.orderType == 'Dine-in' 
-                                ? Icons.restaurant 
+                            order.orderType == 'Dine-in'
+                                ? Icons.restaurant
                                 : order.orderType == 'Takeaway'
-                                    ? Icons.takeout_dining
-                                    : Icons.delivery_dining,
+                                ? Icons.takeout_dining
+                                : Icons.delivery_dining,
                             size: 12,
                             color: Colors.orange[700],
                           ),
