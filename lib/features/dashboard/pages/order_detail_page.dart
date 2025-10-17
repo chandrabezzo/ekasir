@@ -9,9 +9,14 @@ import '../../../shared/models/order_status.dart';
 import '../dashboard_controller.dart';
 
 class OrderDetailPage extends StatelessWidget {
-  final String orderId;
+  OrderDetailPage({super.key});
 
-  const OrderDetailPage({super.key, required this.orderId});
+  static const idKey = 'id';
+  static const routeName = '/order/:$idKey';
+  static String route(String id) => routeName.replaceFirst(idKey, id);
+
+  final parameters = Get.parameters;
+  String get orderId => parameters[idKey]!;
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +81,7 @@ class OrderDetailPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.purple[50]!, Colors.white],
-        ),
+        gradient: LinearGradient(colors: [Colors.purple[50]!, Colors.white]),
       ),
       child: Column(
         children: [
@@ -107,7 +110,10 @@ class OrderDetailPage extends StatelessWidget {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: order.status.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -116,7 +122,11 @@ class OrderDetailPage extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(order.status.icon, color: order.status.color, size: 20),
+                    Icon(
+                      order.status.icon,
+                      color: order.status.color,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       order.status.label,
@@ -191,10 +201,7 @@ class OrderDetailPage extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           '$label: ',
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
         ),
         Text(
           value,
@@ -234,7 +241,11 @@ class OrderDetailPage extends StatelessWidget {
                   color: Colors.orange[50],
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.shopping_bag, color: Colors.orange[700], size: 20),
+                child: Icon(
+                  Icons.shopping_bag,
+                  color: Colors.orange[700],
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -247,7 +258,10 @@ class OrderDetailPage extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.purple[50],
                   borderRadius: BorderRadius.circular(8),
@@ -309,7 +323,10 @@ class OrderDetailPage extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.teal[50],
                         borderRadius: BorderRadius.circular(6),
@@ -399,7 +416,11 @@ class OrderDetailPage extends StatelessWidget {
                   color: Colors.green[50],
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.receipt_long, color: Colors.green[700], size: 20),
+                child: Icon(
+                  Icons.receipt_long,
+                  color: Colors.green[700],
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -451,10 +472,7 @@ class OrderDetailPage extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.grey[700],
-          ),
+          style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[700]),
         ),
         Text(
           'Rp ${amount.toStringAsFixed(0)}',
@@ -577,7 +595,10 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Future<void> _handleAcceptOrder(DashboardController controller, OrderModel order) async {
+  Future<void> _handleAcceptOrder(
+    DashboardController controller,
+    OrderModel order,
+  ) async {
     final confirmed = await Get.dialog<bool>(
       _buildConfirmDialog(
         title: 'Terima Pesanan',
@@ -595,7 +616,10 @@ class OrderDetailPage extends StatelessWidget {
     }
   }
 
-  Future<void> _handleMarkAsReady(DashboardController controller, OrderModel order) async {
+  Future<void> _handleMarkAsReady(
+    DashboardController controller,
+    OrderModel order,
+  ) async {
     final confirmed = await Get.dialog<bool>(
       _buildConfirmDialog(
         title: 'Pesanan Siap',
@@ -613,7 +637,10 @@ class OrderDetailPage extends StatelessWidget {
     }
   }
 
-  Future<void> _handleCompleteOrder(DashboardController controller, OrderModel order) async {
+  Future<void> _handleCompleteOrder(
+    DashboardController controller,
+    OrderModel order,
+  ) async {
     final confirmed = await Get.dialog<bool>(
       _buildConfirmDialog(
         title: 'Selesaikan Pesanan',
@@ -631,7 +658,10 @@ class OrderDetailPage extends StatelessWidget {
     }
   }
 
-  Future<void> _handleCancelOrder(DashboardController controller, OrderModel order) async {
+  Future<void> _handleCancelOrder(
+    DashboardController controller,
+    OrderModel order,
+  ) async {
     final confirmed = await Get.dialog<bool>(
       _buildConfirmDialog(
         title: 'Batalkan Pesanan',
@@ -682,10 +712,7 @@ class OrderDetailPage extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               message,
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

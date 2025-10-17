@@ -36,7 +36,7 @@ class DashboardPage extends GetView<DashboardController> {
 
   Widget _buildHeader() {
     final authController = Get.find<AuthController>();
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -65,7 +65,11 @@ class DashboardPage extends GetView<DashboardController> {
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.dashboard, color: Colors.white, size: 28),
+                child: const Icon(
+                  Icons.dashboard,
+                  color: Colors.white,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -80,13 +84,15 @@ class DashboardPage extends GetView<DashboardController> {
                         color: Colors.black87,
                       ),
                     ),
-                    Obx(() => Text(
-                          authController.currentUser?.name ?? 'Kasir',
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            color: Colors.grey[600],
-                          ),
-                        )),
+                    Obx(
+                      () => Text(
+                        authController.currentUser?.name ?? 'Kasir',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -97,10 +103,7 @@ class DashboardPage extends GetView<DashboardController> {
                 child: InkWell(
                   onTap: () {
                     HapticFeedback.lightImpact();
-                    Get.to(
-                      () => const QrGeneratorPage(),
-                      transition: Transition.rightToLeft,
-                    );
+                    Get.toNamed(QrGeneratePage.routeName);
                   },
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
@@ -141,7 +144,9 @@ class DashboardPage extends GetView<DashboardController> {
                         ),
                         title: Text(
                           'Logout',
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         content: Text(
                           'Apakah Anda yakin ingin keluar?',
@@ -162,7 +167,7 @@ class DashboardPage extends GetView<DashboardController> {
                         ],
                       ),
                     );
-                    
+
                     if (confirm == true) {
                       await authController.logout();
                       Get.offAllNamed(LoginPage.routeName);
@@ -197,13 +202,16 @@ class DashboardPage extends GetView<DashboardController> {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Obx(() => _buildStatCard(
-                  title: 'Pendapatan Hari Ini',
-                  value: 'Rp ${NumberFormat('#,###', 'id_ID').format(controller.todayRevenue)}',
-                  icon: Icons.payments,
-                  color: Colors.green,
-                  isSmallText: true,
-                )),
+            child: Obx(
+              () => _buildStatCard(
+                title: 'Pendapatan Hari Ini',
+                value:
+                    'Rp ${NumberFormat('#,###', 'id_ID').format(controller.todayRevenue)}',
+                icon: Icons.payments,
+                color: Colors.green,
+                isSmallText: true,
+              ),
+            ),
           ),
         ],
       ),
@@ -258,10 +266,7 @@ class DashboardPage extends GetView<DashboardController> {
           const SizedBox(height: 4),
           Text(
             title,
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
+            style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -272,7 +277,11 @@ class DashboardPage extends GetView<DashboardController> {
     final tabs = [
       {'id': 'all', 'label': 'Semua', 'badge': null},
       {'id': 'pending', 'label': 'Menunggu', 'badge': controller.pendingCount},
-      {'id': 'preparing', 'label': 'Diproses', 'badge': controller.preparingCount},
+      {
+        'id': 'preparing',
+        'label': 'Diproses',
+        'badge': controller.preparingCount,
+      },
       {'id': 'ready', 'label': 'Siap', 'badge': null},
       {'id': 'completed', 'label': 'Selesai', 'badge': null},
     ];
@@ -303,7 +312,10 @@ class DashboardPage extends GetView<DashboardController> {
                   },
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -311,14 +323,19 @@ class DashboardPage extends GetView<DashboardController> {
                           tab['label'] as String,
                           style: GoogleFonts.poppins(
                             color: isSelected ? Colors.white : Colors.black87,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                             fontSize: 14,
                           ),
                         ),
                         if (badge != null && badge > 0) ...[
                           const SizedBox(width: 6),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: isSelected ? Colors.white : Colors.purple,
                               borderRadius: BorderRadius.circular(10),
@@ -328,7 +345,9 @@ class DashboardPage extends GetView<DashboardController> {
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? Colors.purple : Colors.white,
+                                color: isSelected
+                                    ? Colors.purple
+                                    : Colors.white,
                               ),
                             ),
                           ),
@@ -398,10 +417,7 @@ class DashboardPage extends GetView<DashboardController> {
           const SizedBox(height: 8),
           Text(
             'Pesanan akan muncul di sini',
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -418,10 +434,7 @@ class DashboardPage extends GetView<DashboardController> {
       child: InkWell(
         onTap: () {
           HapticFeedback.selectionClick();
-          Get.to(
-            () => OrderDetailPage(orderId: order.id),
-            transition: Transition.rightToLeft,
-          );
+          Get.toNamed(OrderDetailPage.route(order.id));
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
@@ -433,7 +446,10 @@ class DashboardPage extends GetView<DashboardController> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Colors.purple[400]!, Colors.purple[600]!],
@@ -451,7 +467,10 @@ class DashboardPage extends GetView<DashboardController> {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: order.status.color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -459,7 +478,11 @@ class DashboardPage extends GetView<DashboardController> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(order.status.icon, size: 14, color: order.status.color),
+                        Icon(
+                          order.status.icon,
+                          size: 14,
+                          color: order.status.color,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           order.status.label,
@@ -483,7 +506,7 @@ class DashboardPage extends GetView<DashboardController> {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               // Customer info
               Row(
                 children: [
@@ -535,7 +558,11 @@ class DashboardPage extends GetView<DashboardController> {
                     ),
                   ),
                   const Spacer(),
-                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.grey[400],
+                  ),
                 ],
               ),
             ],

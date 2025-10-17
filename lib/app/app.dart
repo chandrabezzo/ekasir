@@ -12,9 +12,7 @@ import 'i18n/translation_service.dart';
 import 'styles/app_style.dart';
 
 class App extends StatelessWidget {
-  const App({super.key, this.havePromotion = false});
-
-  final bool havePromotion;
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +43,7 @@ class App extends StatelessWidget {
           Get.changeThemeMode(ThemeMode.system);
         },
         title: Strings.appName.tr,
-        initialRoute: controller.initialRoute(havePromotion: havePromotion),
+        initialRoute: controller.initialRoute(),
         initialBinding: AppBinding(),
         getPages: routes,
         theme: AppStyles.lightTheme(context),

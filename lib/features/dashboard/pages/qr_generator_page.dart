@@ -4,27 +4,56 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class QrGeneratorPage extends StatefulWidget {
-  const QrGeneratorPage({super.key});
+class QrGeneratePage extends StatefulWidget {
+  const QrGeneratePage({super.key});
 
-  static const String routeName = '/qr-generator';
+  static const String routeName = '/qr/generate';
 
   @override
-  State<QrGeneratorPage> createState() => _QrGeneratorPageState();
+  State<QrGeneratePage> createState() => _QrGeneratePageState();
 }
 
-class _QrGeneratorPageState extends State<QrGeneratorPage> {
-  // In production, this should be your actual app's deep link or web URL
-  // For example: "https://yourdomain.com/order" or "myapp://order"
-  final String orderPageUrl = 'ekasir://order'; // Deep link scheme
-  final String webUrl = 'https://kampungkanyaah.cafe/order'; // Alternative web URL
-  
-  bool _showWebUrl = false;
+class _QrGeneratePageState extends State<QrGeneratePage> {
+  // Base URL for self-service
+  final String baseUrl = 'https://self-service.kasair.id/';
+
+  // Selected values
+  String? _selectedOutlet;
+  String? _selectedTable;
+
+  // Mock data - In production, fetch from API or database
+  final List<Map<String, String>> _outlets = [
+    {'id': '3307', 'name': 'Outlet 1 - Main Branch'},
+    {'id': '3308', 'name': 'Outlet 2 - Downtown'},
+    {'id': '3309', 'name': 'Outlet 3 - Mall'},
+    {'id': '3310', 'name': 'Outlet 4 - Airport'},
+  ];
+
+  final List<Map<String, String>> _tables = [
+    {'id': '3486', 'name': 'Table 1'},
+    {'id': '3487', 'name': 'Table 2'},
+    {'id': '3488', 'name': 'Table 3'},
+    {'id': '3489', 'name': 'Table 4'},
+    {'id': '3490', 'name': 'Table 5'},
+    {'id': '3491', 'name': 'Table 6'},
+    {'id': '3492', 'name': 'Table 7'},
+    {'id': '3493', 'name': 'Table 8'},
+  ];
+
+  String _generateUrl() {
+    if (_selectedOutlet == null || _selectedTable == null) {
+      return '';
+    }
+    return '${baseUrl}?outlet=$_selectedOutlet&table=$_selectedTable';
+  }
+
+  bool get _canGenerateQr =>
+      _selectedOutlet != null && _selectedTable != null;
 
   @override
   Widget build(BuildContext context) {
-    final displayUrl = _showWebUrl ? webUrl : orderPageUrl;
-    
+    final displayUrl = _generateUrl();
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -49,19 +78,24 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
             // Info Card
             _buildInfoCard(),
             const SizedBox(height: 24),
-            
-            // QR Code Display
-            _buildQrCodeCard(displayUrl),
+
+            // Selection Form
+            _buildSelectionForm(),
             const SizedBox(height: 24),
-            
-            // URL Type Toggle
-            _buildUrlToggle(),
-            const SizedBox(height: 16),
-            
-            // URL Display
-            _buildUrlDisplay(displayUrl),
+
+            // QR Code Display (only show if outlet and table are selected)
+            if (_canGenerateQr) ...[
+              _buildQrCodeCard(displayUrl),
+              const SizedBox(height: 24),
+
+              // URL Display
+              _buildUrlDisplay(displayUrl),
+              const SizedBox(height: 24),
+            ] else
+              _buildPlaceholder(),
+
             const SizedBox(height: 24),
-            
+
             // Instructions
             _buildInstructions(),
           ],
@@ -74,9 +108,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.purple[50]!, Colors.white],
-        ),
+        gradient: LinearGradient(colors: [Colors.purple[50]!, Colors.white]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.purple[100]!),
       ),
@@ -96,7 +128,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'QR Code untuk Pelanggan',
+                  'QR Code Self-Service',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -105,7 +137,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Scan QR ini untuk akses menu pemesanan',
+                  'Pilih outlet dan meja untuk generate QR Code',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: Colors.grey[600],
@@ -164,7 +196,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
             ),
           ),
           const SizedBox(height: 20),
-          
+
           // Download/Share Buttons
           Row(
             children: [
@@ -192,71 +224,237 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
     );
   }
 
-  Widget _buildUrlToggle() {
+  Widget _buildSelectionForm() {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: _buildToggleButton(
-              label: 'Deep Link',
-              isSelected: !_showWebUrl,
-              onTap: () {
-                HapticFeedback.selectionClick();
-                setState(() => _showWebUrl = false);
-              },
+          Row(
+            children: [
+              Icon(Icons.settings, color: Colors.purple[700], size: 22),
+              const SizedBox(width: 8),
+              Text(
+                'Konfigurasi QR Code',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Outlet Dropdown
+          Text(
+            'Pilih Outlet',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700],
             ),
           ),
-          Expanded(
-            child: _buildToggleButton(
-              label: 'Web URL',
-              isSelected: _showWebUrl,
-              onTap: () {
-                HapticFeedback.selectionClick();
-                setState(() => _showWebUrl = true);
-              },
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedOutlet,
+                isExpanded: true,
+                hint: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Pilih outlet...',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ),
+                icon: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+                ),
+                borderRadius: BorderRadius.circular(12),
+                items: _outlets.map((outlet) {
+                  return DropdownMenuItem<String>(
+                    value: outlet['id'],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        outlet['name']!,
+                        style: GoogleFonts.poppins(fontSize: 14),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _selectedOutlet = value;
+                  });
+                },
+              ),
             ),
           ),
+          const SizedBox(height: 20),
+
+          // Table Dropdown
+          Text(
+            'Pilih Meja',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedTable,
+                isExpanded: true,
+                hint: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'Pilih meja...',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ),
+                icon: Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+                ),
+                borderRadius: BorderRadius.circular(12),
+                items: _tables.map((table) {
+                  return DropdownMenuItem<String>(
+                    value: table['id'],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        table['name']!,
+                        style: GoogleFonts.poppins(fontSize: 14),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _selectedTable = value;
+                  });
+                },
+              ),
+            ),
+          ),
+
+          // Reset Button
+          if (_canGenerateQr) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _selectedOutlet = null;
+                    _selectedTable = null;
+                  });
+                },
+                icon: const Icon(Icons.refresh),
+                label: Text(
+                  'Reset Pilihan',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.purple[700],
+                  side: BorderSide(color: Colors.purple[300]!),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildToggleButton({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-            color: isSelected ? Colors.purple[700] : Colors.grey[600],
+  Widget _buildPlaceholder() {
+    return Container(
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 2),
           ),
-          textAlign: TextAlign.center,
-        ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.qr_code_2,
+              size: 80,
+              color: Colors.grey[400],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Pilih Outlet dan Meja',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'QR Code akan ditampilkan setelah\nAnda memilih outlet dan meja',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -276,10 +474,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
           Expanded(
             child: Text(
               url,
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                color: Colors.grey[800],
-              ),
+              style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[800]),
             ),
           ),
           IconButton(
@@ -336,33 +531,43 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
           const SizedBox(height: 16),
           _buildInstructionItem(
             '1',
-            'Print QR Code',
-            'Download dan print QR code ini',
+            'Pilih Outlet & Meja',
+            'Pilih outlet dan nomor meja di form',
           ),
           const SizedBox(height: 12),
           _buildInstructionItem(
             '2',
-            'Pasang di Meja',
-            'Letakkan di setiap meja cafe',
+            'Generate QR Code',
+            'QR Code akan otomatis dibuat',
           ),
           const SizedBox(height: 12),
           _buildInstructionItem(
             '3',
-            'Pelanggan Scan',
-            'Pelanggan scan untuk pesan',
+            'Download & Print',
+            'Download dan print QR code',
           ),
           const SizedBox(height: 12),
           _buildInstructionItem(
             '4',
-            'Terima Pesanan',
-            'Pesanan masuk ke dashboard kasir',
+            'Pasang di Meja',
+            'Tempelkan QR di meja yang sesuai',
+          ),
+          const SizedBox(height: 12),
+          _buildInstructionItem(
+            '5',
+            'Customer Self-Service',
+            'Pelanggan scan untuk akses menu',
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInstructionItem(String number, String title, String description) {
+  Widget _buildInstructionItem(
+    String number,
+    String title,
+    String description,
+  ) {
     return Row(
       children: [
         Container(

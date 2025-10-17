@@ -11,7 +11,7 @@ class AppController extends GetxController {
   AppController({required SharedPreferences sharedPreferences})
     : _sharedPreferences = sharedPreferences;
 
-  String initialRoute({bool havePromotion = false}) {
+  String initialRoute() {
     final token = _sharedPreferences.getString(LocalKeys.token);
 
     if (token != null) {
