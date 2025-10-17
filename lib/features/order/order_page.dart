@@ -197,20 +197,21 @@ class OrderPage extends GetView<OrderController> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: controller.categories.length,
         itemBuilder: (context, index) {
-          final category = controller.categories[index];
-          final isSelected = controller.selectedCategory == category;
-
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: _buildCategoryChip(
-              label: category,
-              isSelected: isSelected,
-              onTap: () {
-                HapticFeedback.selectionClick();
-                controller.selectCategory(category);
-              },
-            ),
-          );
+          return Obx(() {
+            final category = controller.categories[index];
+            final isSelected = controller.selectedCategory == category;
+            return Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: _buildCategoryChip(
+                label: category,
+                isSelected: isSelected,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  controller.selectCategory(category);
+                },
+              ),
+            );
+          });
         },
       ),
     );
