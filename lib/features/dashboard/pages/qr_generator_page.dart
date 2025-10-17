@@ -44,11 +44,10 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
     if (_selectedOutlet == null || _selectedTable == null) {
       return '';
     }
-    return '${baseUrl}?outlet=$_selectedOutlet&table=$_selectedTable';
+    return '$baseUrl?outlet=$_selectedOutlet&table=$_selectedTable';
   }
 
-  bool get _canGenerateQr =>
-      _selectedOutlet != null && _selectedTable != null;
+  bool get _canGenerateQr => _selectedOutlet != null && _selectedTable != null;
 
   @override
   Widget build(BuildContext context) {
@@ -388,9 +387,7 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
                 icon: const Icon(Icons.refresh),
                 label: Text(
                   'Reset Pilihan',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.purple[700],
@@ -430,11 +427,7 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
               color: Colors.grey[100],
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.qr_code_2,
-              size: 80,
-              color: Colors.grey[400],
-            ),
+            child: Icon(Icons.qr_code_2, size: 80, color: Colors.grey[400]),
           ),
           const SizedBox(height: 20),
           Text(
@@ -449,10 +442,7 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
           Text(
             'QR Code akan ditampilkan setelah\nAnda memilih outlet dan meja',
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 13,
-              color: Colors.grey[500],
-            ),
+            style: GoogleFonts.poppins(fontSize: 13, color: Colors.grey[500]),
           ),
         ],
       ),
