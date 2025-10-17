@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../app/constant/app_colors.dart';
+
 import 'dashboard_controller.dart';
 import '../../shared/models/order_model.dart';
 import '../../shared/models/order_status.dart';
@@ -20,7 +22,7 @@ class DashboardPage extends GetView<DashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -287,9 +289,18 @@ class DashboardPage extends GetView<DashboardController> {
     ];
 
     return Container(
-      height: 56,
+      height: 60,
       padding: const EdgeInsets.symmetric(vertical: 8),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Obx(() {
         return ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -303,56 +314,72 @@ class DashboardPage extends GetView<DashboardController> {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Material(
-                color: isSelected ? Colors.purple : Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    controller.selectTab(tab['id'] as String);
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          tab['label'] as String,
-                          style: GoogleFonts.poppins(
-                            color: isSelected ? Colors.white : Colors.black87,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                            fontSize: 14,
+                color: Colors.transparent,
+                child: Ink(
+                  decoration: BoxDecoration(
+                    gradient: isSelected ? AppColors.purpleGradient : null,
+                    color: isSelected ? null : AppColors.gray100,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      controller.selectTab(tab['id'] as String);
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            tab['label'] as String,
+                            style: GoogleFonts.poppins(
+                              color: isSelected ? AppColors.white : AppColors.textPrimary,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                              fontSize: 14,
+                              letterSpacing: 0.2,
+                            ),
                           ),
-                        ),
-                        if (badge != null && badge > 0) ...[
-                          const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected ? Colors.white : Colors.purple,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              badge.toString(),
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? Colors.purple
-                                    : Colors.white,
+                          if (badge != null && badge > 0) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected ? AppColors.white : AppColors.primary,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                badge.toString(),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.white,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -530,6 +557,95 @@ class DashboardPage extends GetView<DashboardController> {
                       color: Colors.grey[600],
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Outlet & Table info
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: [
+                  if (order.outletName != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.blue[200]!, width: 1),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.store, size: 12, color: Colors.blue[700]),
+                          const SizedBox(width: 4),
+                          Text(
+                            order.outletName!,
+                            style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (order.tableNumber != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.green[50],
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.green[200]!, width: 1),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.table_restaurant, size: 12, color: Colors.green[700]),
+                          const SizedBox(width: 4),
+                          Text(
+                            order.tableNumber!,
+                            style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (order.orderType != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.orange[50],
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.orange[200]!, width: 1),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            order.orderType == 'Dine-in' 
+                                ? Icons.restaurant 
+                                : order.orderType == 'Takeaway'
+                                    ? Icons.takeout_dining
+                                    : Icons.delivery_dining,
+                            size: 12,
+                            color: Colors.orange[700],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            order.orderType!,
+                            style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.orange[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
               const SizedBox(height: 12),

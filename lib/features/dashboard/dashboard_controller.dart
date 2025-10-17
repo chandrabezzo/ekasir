@@ -124,6 +124,16 @@ class DashboardController extends GetxController {
     required int minutesAgo,
   }) {
     final random = Random();
+    
+    // Random outlet and table
+    final outlets = ['Main Branch', 'Downtown', 'Mall'];
+    final orderTypes = ['Dine-in', 'Takeaway', 'Delivery'];
+    final selectedOutlet = outlets[random.nextInt(outlets.length)];
+    final selectedOrderType = orderTypes[random.nextInt(orderTypes.length)];
+    final tableNumber = selectedOrderType == 'Dine-in' 
+        ? 'Table ${random.nextInt(20) + 1}' 
+        : null;
+    
     final products = [
       ProductModel(
         id: '1',
@@ -173,6 +183,9 @@ class DashboardController extends GetxController {
       items: items,
       customerName: customerName,
       customerPhone: customerPhone,
+      outletName: selectedOutlet,
+      tableNumber: tableNumber,
+      orderType: selectedOrderType,
       subtotal: subtotal,
       tax: tax,
       discount: discount,
