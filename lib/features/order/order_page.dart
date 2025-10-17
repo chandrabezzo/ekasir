@@ -10,6 +10,9 @@ import '../../shared/models/product_model.dart';
 import 'widgets/product_detail_modal.dart';
 import 'widgets/cart_modal.dart';
 import 'widgets/product_card_shimmer.dart';
+import '../auth/auth_controller.dart';
+import '../auth/login_page.dart';
+import '../dashboard/dashboard_page.dart';
 
 class OrderPage extends GetView<OrderController> {
   const OrderPage({super.key});
@@ -42,16 +45,15 @@ class OrderPage extends GetView<OrderController> {
   }
 
   Widget _buildHeader() {
+    final authController = Get.find<AuthController>();
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.orange[50]!,
-            Colors.white,
-          ],
+          colors: [Colors.orange[50]!, Colors.white],
         ),
         boxShadow: [
           BoxShadow(
@@ -63,6 +65,61 @@ class OrderPage extends GetView<OrderController> {
       ),
       child: Column(
         children: [
+          // Login/Dashboard button at top right
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Obx(() {
+                final isLoggedIn = authController.isLoggedIn;
+                
+                return Material(
+                  color: isLoggedIn ? Colors.purple[50] : Colors.blue[50],
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      if (isLoggedIn) {
+                        // Go to Dashboard
+                        Get.toNamed(DashboardPage.routeName);
+                      } else {
+                        // Go to Login
+                        Get.toNamed(LoginPage.routeName);
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isLoggedIn ? Icons.dashboard : Icons.login,
+                            color: isLoggedIn ? Colors.purple[700] : Colors.blue[700],
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            isLoggedIn ? 'Dashboard' : 'Login',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: isLoggedIn ? Colors.purple[700] : Colors.blue[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // Logo and title
           Hero(
             tag: 'cafe_logo',
             child: Container(
@@ -82,11 +139,7 @@ class OrderPage extends GetView<OrderController> {
                 ],
               ),
               child: Center(
-                child: Icon(
-                  Icons.local_cafe,
-                  size: 50,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.local_cafe, size: 50, color: Colors.white),
               ),
             ),
           ),
@@ -126,36 +179,34 @@ class OrderPage extends GetView<OrderController> {
       height: 56,
       padding: const EdgeInsets.symmetric(vertical: 8),
       color: Colors.white,
-      child: Obx(() {
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: controller.categories.length,
-          itemBuilder: (context, index) {
-            final category = controller.categories[index];
-            final isSelected = controller.selectedCategory == category;
-            
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Text(category),
-                selected: isSelected,
-                onSelected: (_) => controller.selectCategory(category),
-                backgroundColor: Colors.white,
-                selectedColor: Colors.purple,
-                labelStyle: GoogleFonts.poppins(
-                  color: isSelected ? Colors.white : Colors.black87,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                ),
-                side: BorderSide(
-                  color: isSelected ? Colors.purple : Colors.grey[300]!,
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: controller.categories.length,
+        itemBuilder: (context, index) {
+          final category = controller.categories[index];
+          final isSelected = controller.selectedCategory == category;
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: FilterChip(
+              label: Text(category),
+              selected: isSelected,
+              onSelected: (_) => controller.selectCategory(category),
+              backgroundColor: Colors.white,
+              selectedColor: Colors.purple,
+              labelStyle: GoogleFonts.poppins(
+                color: isSelected ? Colors.white : Colors.black87,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
-            );
-          },
-        );
-      }),
+              side: BorderSide(
+                color: isSelected ? Colors.purple : Colors.grey[300]!,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -174,7 +225,10 @@ class OrderPage extends GetView<OrderController> {
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
         ),
       ),
     );
@@ -183,7 +237,7 @@ class OrderPage extends GetView<OrderController> {
   Widget _buildProductList() {
     return Obx(() {
       final products = controller.filteredProducts;
-      
+
       if (products.isEmpty) {
         return _buildEmptyState();
       }
@@ -248,10 +302,7 @@ class OrderPage extends GetView<OrderController> {
           const SizedBox(height: 8),
           Text(
             'Coba cari dengan kata kunci lain',
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -313,7 +364,11 @@ class OrderPage extends GetView<OrderController> {
                             colors: [Colors.grey[200]!, Colors.grey[100]!],
                           ),
                         ),
-                        child: Icon(Icons.restaurant, size: 40, color: Colors.grey[400]),
+                        child: Icon(
+                          Icons.restaurant,
+                          size: 40,
+                          color: Colors.grey[400],
+                        ),
                       ),
                       errorWidget: (context, url, error) => Container(
                         width: 90,
@@ -323,7 +378,11 @@ class OrderPage extends GetView<OrderController> {
                             colors: [Colors.grey[200]!, Colors.grey[100]!],
                           ),
                         ),
-                        child: Icon(Icons.restaurant, size: 40, color: Colors.grey[400]),
+                        child: Icon(
+                          Icons.restaurant,
+                          size: 40,
+                          color: Colors.grey[400],
+                        ),
                       ),
                     ),
                   ),
@@ -349,7 +408,10 @@ class OrderPage extends GetView<OrderController> {
                         ),
                         if (index < 2)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.orange[100],
                               borderRadius: BorderRadius.circular(4),
@@ -398,11 +460,18 @@ class OrderPage extends GetView<OrderController> {
                             },
                             borderRadius: BorderRadius.circular(10),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 10,
+                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.add_shopping_cart, size: 16, color: Colors.white),
+                                  const Icon(
+                                    Icons.add_shopping_cart,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
                                     'Pilih',
@@ -445,7 +514,7 @@ class OrderPage extends GetView<OrderController> {
   Widget _buildCartButton() {
     return Obx(() {
       final itemCount = controller.cartItemCount;
-      
+
       return AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.all(16),
@@ -490,7 +559,9 @@ class OrderPage extends GetView<OrderController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        itemCount > 0 ? Icons.shopping_cart : Icons.shopping_cart_outlined,
+                        itemCount > 0
+                            ? Icons.shopping_cart
+                            : Icons.shopping_cart_outlined,
                         color: Colors.white,
                         size: 24,
                       ),
@@ -509,7 +580,10 @@ class OrderPage extends GetView<OrderController> {
                           scale: 1.0,
                           duration: const Duration(milliseconds: 200),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [Colors.red[400]!, Colors.red[600]!],

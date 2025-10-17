@@ -17,7 +17,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AppController>(
-      init: AppController(sharedPreferences: Get.find<SharedPreferences>()),
+      init: AppController(),
       builder: (controller) => GetMaterialApp(
         debugShowCheckedModeBanner: kDebugMode,
         enableLog: kDebugMode,

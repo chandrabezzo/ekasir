@@ -1,11 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
+import '../features/auth/auth_controller.dart';
 import 'app_interceptor.dart';
 
 class AppBinding extends Bindings {
   @override
   void dependencies() {
+    // Initialize AuthController first as it may be needed by other services
+    Get.put(AuthController(), permanent: true);
+    
     Get.put(client(), permanent: true);
   }
 

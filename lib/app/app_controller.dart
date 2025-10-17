@@ -1,23 +1,11 @@
-import 'package:ekasir/features/dashboard/dashboard_page.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../features/order/order_page.dart';
-import 'constant/local_keys.dart';
 
 class AppController extends GetxController {
-  final SharedPreferences _sharedPreferences;
-
-  AppController({required SharedPreferences sharedPreferences})
-    : _sharedPreferences = sharedPreferences;
-
+  /// Returns the initial route for the app.
+  /// OrderPage is publicly accessible without authentication
   String initialRoute() {
-    final token = _sharedPreferences.getString(LocalKeys.token);
-
-    if (token != null) {
-      return DashboardPage.routeName;
-    } else {
-      return OrderPage.routeName;
-    }
+    return OrderPage.routeName;
   }
 }
