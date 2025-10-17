@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ],
         ),
-        child: Form(
+      child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,19 +240,95 @@ class _LoginPageState extends State<LoginPage> {
                     _obscurePassword ? Icons.visibility_off : Icons.visibility,
                     color: AppColors.gray600,
                   ),
-                  onPressed: () {
-                    HapticFeedback.selectionClick();
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
                 ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Password tidak boleh kosong';
-                }
-                if (value.length < 6) {
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  hintText: 'Masukkan username',
+                  prefixIcon: const Icon(Icons.person_outline, color: AppColors.primary),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.surface),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.surface),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.primary, width: 2),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Username tidak boleh kosong';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              
+              // Password Field
+              Text(
+                'Password',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  hintText: 'Masukkan password',
+                  prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      color: AppColors.gray600,
+                    ),
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.surface),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.surface),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.primary, width: 2),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Password tidak boleh kosong';
+                  }
+                  if (value.length < 6) {
+                    return 'Password minimal 6 karakter';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
                   return 'Password minimal 6 karakter';
                 }
                 return null;
@@ -260,7 +336,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ],
         ),
-      ),
       ),
     );
   }
@@ -312,29 +387,29 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.info.withValues(alpha: 0.3), width: 1.5),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.info_outline, color: AppColors.info, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  'Demo Credentials',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.info,
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.info_outline, color: AppColors.info, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Demo Credentials',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.info,
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildCredentialRow('Admin', 'admin / admin123'),
-            const SizedBox(height: 6),
-            _buildCredentialRow('Kasir 1', 'kasir1 / kasir123'),
-            const SizedBox(height: 6),
-            _buildCredentialRow('Kasir 2', 'kasir2 / kasir456'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildCredentialRow('Admin', 'admin / admin123'),
+          const SizedBox(height: 6),
+          _buildCredentialRow('Kasir 1', 'kasir1 / kasir123'),
+          const SizedBox(height: 6),
+          _buildCredentialRow('Kasir 2', 'kasir2 / kasir456'),
           ],
         ),
       ),
