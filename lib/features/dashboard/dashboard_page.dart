@@ -13,6 +13,7 @@ import 'pages/order_detail_page.dart';
 import 'pages/qr_generator_page.dart';
 import '../auth/auth_controller.dart';
 import '../auth/login_page.dart';
+import '../menu/pages/menu_list_page.dart';
 
 class DashboardPage extends GetView<DashboardController> {
   const DashboardPage({super.key});
@@ -111,6 +112,23 @@ class DashboardPage extends GetView<DashboardController> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     child: Icon(Icons.qr_code_2, color: Colors.orange[700]),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              // Menu Management Button
+              Material(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.circular(12),
+                child: InkWell(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    Get.toNamed(MenuListPage.routeName);
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    child: Icon(Icons.restaurant_menu, color: Colors.green[700]),
                   ),
                 ),
               ),

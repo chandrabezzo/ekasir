@@ -7,6 +7,8 @@ import '../features/dashboard/dashboard_binding.dart';
 import '../features/dashboard/dashboard_page.dart';
 import '../features/dashboard/pages/order_detail_page.dart';
 import '../features/dashboard/pages/qr_generator_page.dart';
+import '../features/menu/pages/menu_list_page.dart';
+import '../features/menu/pages/menu_form_page.dart';
 import 'middlewares/auth_middleware.dart';
 
 /// OrderPage is the default entry point (public access)
@@ -41,6 +43,16 @@ final routes = [
   GetPage(
     name: QrGeneratePage.routeName,
     page: () => const QrGeneratePage(),
+    middlewares: [AuthMiddleware()],
+  ),
+  GetPage(
+    name: MenuListPage.routeName,
+    page: () => const MenuListPage(),
+    middlewares: [AuthMiddleware()],
+  ),
+  GetPage(
+    name: MenuFormPage.routeName,
+    page: () => const MenuFormPage(),
     middlewares: [AuthMiddleware()],
   ),
 ];
