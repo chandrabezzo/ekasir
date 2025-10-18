@@ -19,7 +19,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AppController>(
       init: AppController(),
-      builder: (controller) => GetMaterialApp.router(
+      builder: (controller) => GetMaterialApp(
         debugShowCheckedModeBanner: kDebugMode,
         enableLog: kDebugMode,
         // logWriterCallback: !kIsWeb
@@ -44,9 +44,7 @@ class App extends StatelessWidget {
           Get.changeThemeMode(ThemeMode.system);
         },
         title: Strings.appName.tr,
-        routeInformationParser: GetInformationParser(
-          initialRoute: OrderPage.routeName,
-        ),
+        initialRoute: '/',
         unknownRoute: unknownRoute,
         initialBinding: AppBinding(),
         getPages: routes,
