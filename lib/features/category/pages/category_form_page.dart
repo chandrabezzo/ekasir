@@ -4,52 +4,59 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../app/constant/app_colors.dart';
-import '../../../shared/models/product_model.dart';
+import '../../../shared/models/category_model.dart';
 import '../../../shared/widget/gradient_button.dart';
-import '../menu_controller.dart' as menu_mgmt;
-import '../../category/category_controller.dart';
+import '../category_controller.dart';
 
-class MenuFormPage extends StatefulWidget {
-  const MenuFormPage({super.key});
+class CategoryFormPage extends StatefulWidget {
+  const CategoryFormPage({super.key});
 
-  static const String routeName = '/menu-form';
+  static const String routeName = '/category-form';
 
   @override
-  State<MenuFormPage> createState() => _MenuFormPageState();
+  State<CategoryFormPage> createState() => _CategoryFormPageState();
 }
 
-class _MenuFormPageState extends State<MenuFormPage> {
+class _CategoryFormPageState extends State<CategoryFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _imageUrlController = TextEditingController();
 
-  final menuController = Get.find<menu_mgmt.MenuManagementController>();
+  final categoryController = Get.find<CategoryManagementController>();
 
-  String? _selectedCategory;
-  bool _isAvailable = true;
+  String? _selectedIcon;
+  bool _isActive = true;
   bool _isEditMode = false;
-  ProductModel? _editingMenu;
+  CategoryModel? _editingCategory;
+
+  // Available icons for categories
+  final List<Map<String, dynamic>> _availableIcons = [
+    {'name': 'restaurant', 'icon': Icons.restaurant, 'label': 'Restaurant'},
+    {'name': 'local_cafe', 'icon': Icons.local_cafe, 'label': 'Cafe'},
+    {'name': 'fastfood', 'icon': Icons.fastfood, 'label': 'Fast Food'},
+    {'name': 'cake', 'icon': Icons.cake, 'label': 'Cake'},
+    {'name': 'lunch_dining', 'icon': Icons.lunch_dining, 'label': 'Lunch'},
+    {'name': 'local_pizza', 'icon': Icons.local_pizza, 'label': 'Pizza'},
+    {'name': 'icecream', 'icon': Icons.icecream, 'label': 'Ice Cream'},
+    {'name': 'coffee', 'icon': Icons.coffee, 'label': 'Coffee'},
+  ];
 
   @override
   void initState() {
     super.initState();
 
-    // Ensure category controller is initialized
-    Get.put(CategoryManagementController());
-
-    // Check if editing existing menu
-    final menu = Get.arguments as ProductModel?;
-    if (menu != null) {
+    // Check if editing existing category
+    final category = Get.arguments as CategoryModel?;
+    if (category != null) {
       _isEditMode = true;
-      _editingMenu = menu;
-      _nameController.text = menu.name;
-      _descriptionController.text = menu.description;
-      _priceController.text = menu.price.toString();
-      _imageUrlController.text = menu.imageUrl ?? '';
-      _selectedCategory = menu.category;
-      _isAvailable = menu.isAvailable;
+      _editingCategory = category;
+      _nameController.text = category.name;
+      _descriptionController.text = category.description;
+      _selectedIcon = category.iconName;
+      _isActive = category.isActive;
+    } else {
+      // Default icon for new category
+      _selectedIcon = 'restaurant';
     }
   }
 
@@ -57,45 +64,28 @@ class _MenuFormPageState extends State<MenuFormPage> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
-    _priceController.dispose();
-    _imageUrlController.dispose();
     super.dispose();
   }
 
   Future<void> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
-      if (_selectedCategory == null) {
-        Get.snackbar(
-          'Peringatan',
-          'Pilih kategori menu',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.warning,
-          colorText: AppColors.white,
-        );
-        return;
-      }
-
       HapticFeedback.mediumImpact();
 
-      final menu = ProductModel(
+      final category = CategoryModel(
         id: _isEditMode
-            ? _editingMenu!.id
+            ? _editingCategory!.id
             : DateTime.now().millisecondsSinceEpoch.toString(),
         name: _nameController.text,
         description: _descriptionController.text,
-        price: double.parse(_priceController.text),
-        imageUrl: _imageUrlController.text.isEmpty
-            ? null
-            : _imageUrlController.text,
-        category: _selectedCategory!,
-        isAvailable: _isAvailable,
+        iconName: _selectedIcon,
+        isActive: _isActive,
       );
 
       bool success;
       if (_isEditMode) {
-        success = await menuController.updateMenu(menu);
+        success = await categoryController.updateCategory(category);
       } else {
-        success = await menuController.addMenu(menu);
+        success = await categoryController.addCategory(category);
       }
 
       if (success) {
@@ -110,7 +100,7 @@ class _MenuFormPageState extends State<MenuFormPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          _isEditMode ? 'Edit Menu' : 'Tambah Menu',
+          _isEditMode ? 'Edit Kategori' : 'Tambah Kategori',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -155,17 +145,20 @@ class _MenuFormPageState extends State<MenuFormPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Name Field
-                    _buildLabel('Nama Menu'),
+                    _buildLabel('Nama Kategori'),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _nameController,
                       decoration: _buildInputDecoration(
-                        hint: 'Contoh: Nasi Goreng Spesial',
-                        prefixIcon: Icons.restaurant_menu,
+                        hint: 'Contoh: Makanan Berat',
+                        prefixIcon: Icons.label,
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Nama menu tidak boleh kosong';
+                          return 'Nama kategori tidak boleh kosong';
+                        }
+                        if (value.length < 3) {
+                          return 'Nama kategori minimal 3 karakter';
                         }
                         return null;
                       },
@@ -178,7 +171,7 @@ class _MenuFormPageState extends State<MenuFormPage> {
                     TextFormField(
                       controller: _descriptionController,
                       decoration: _buildInputDecoration(
-                        hint: 'Deskripsi menu',
+                        hint: 'Deskripsi kategori',
                         prefixIcon: Icons.description,
                       ),
                       maxLines: 3,
@@ -191,125 +184,13 @@ class _MenuFormPageState extends State<MenuFormPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Price Field
-                    _buildLabel('Harga'),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _priceController,
-                      decoration: _buildInputDecoration(
-                        hint: '25000',
-                        prefixIcon: Icons.payments,
-                      ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Harga tidak boleh kosong';
-                        }
-                        if (double.tryParse(value) == null) {
-                          return 'Harga harus berupa angka';
-                        }
-                        if (double.parse(value) <= 0) {
-                          return 'Harga harus lebih dari 0';
-                        }
-                        return null;
-                      },
-                    ),
+                    // Icon Selection
+                    _buildLabel('Pilih Icon'),
+                    const SizedBox(height: 12),
+                    _buildIconSelector(),
                     const SizedBox(height: 20),
 
-                    // Category Dropdown
-                    _buildLabel('Kategori'),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.gray100,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedCategory,
-                          isExpanded: true,
-                          hint: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.category,
-                                  color: AppColors.primary,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  'Pilih kategori...',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          icon: const Padding(
-                            padding: EdgeInsets.only(right: 12),
-                            child: Icon(
-                              Icons.arrow_drop_down,
-                              color: AppColors.gray600,
-                            ),
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          items: menuController.categories
-                              .where((cat) => cat != 'all')
-                              .map((category) {
-                            return DropdownMenuItem<String>(
-                              value: category,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.category,
-                                      color: AppColors.primary,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Text(
-                                      category,
-                                      style: GoogleFonts.poppins(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            HapticFeedback.selectionClick();
-                            setState(() {
-                              _selectedCategory = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Image URL Field
-                    _buildLabel('URL Gambar (opsional)'),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _imageUrlController,
-                      decoration: _buildInputDecoration(
-                        hint: 'https://example.com/image.jpg',
-                        prefixIcon: Icons.image,
-                      ),
-                      keyboardType: TextInputType.url,
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Availability Switch
+                    // Active Status Switch
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -320,10 +201,8 @@ class _MenuFormPageState extends State<MenuFormPage> {
                       child: Row(
                         children: [
                           Icon(
-                            _isAvailable
-                                ? Icons.check_circle
-                                : Icons.cancel,
-                            color: _isAvailable
+                            _isActive ? Icons.check_circle : Icons.cancel,
+                            color: _isActive
                                 ? AppColors.success
                                 : AppColors.gray600,
                           ),
@@ -333,7 +212,7 @@ class _MenuFormPageState extends State<MenuFormPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Ketersediaan',
+                                  'Status Kategori',
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -341,7 +220,7 @@ class _MenuFormPageState extends State<MenuFormPage> {
                                   ),
                                 ),
                                 Text(
-                                  _isAvailable ? 'Tersedia' : 'Tidak Tersedia',
+                                  _isActive ? 'Aktif' : 'Nonaktif',
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     color: AppColors.textSecondary,
@@ -351,11 +230,11 @@ class _MenuFormPageState extends State<MenuFormPage> {
                             ),
                           ),
                           Switch(
-                            value: _isAvailable,
+                            value: _isActive,
                             onChanged: (value) {
                               HapticFeedback.selectionClick();
                               setState(() {
-                                _isAvailable = value;
+                                _isActive = value;
                               });
                             },
                             activeColor: AppColors.success,
@@ -371,11 +250,11 @@ class _MenuFormPageState extends State<MenuFormPage> {
               // Submit Button
               Obx(() {
                 return GradientButton(
-                  label: _isEditMode ? 'Simpan Perubahan' : 'Tambah Menu',
+                  label: _isEditMode ? 'Simpan Perubahan' : 'Tambah Kategori',
                   icon: _isEditMode ? Icons.save : Icons.add,
                   onPressed: _handleSubmit,
                   gradient: AppColors.purpleGradient,
-                  isLoading: menuController.isLoading,
+                  isLoading: categoryController.isLoading,
                 );
               }),
             ],
@@ -417,7 +296,7 @@ class _MenuFormPageState extends State<MenuFormPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _isEditMode ? 'Edit Menu' : 'Tambah Menu Baru',
+                  _isEditMode ? 'Edit Kategori' : 'Tambah Kategori Baru',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -427,8 +306,8 @@ class _MenuFormPageState extends State<MenuFormPage> {
                 const SizedBox(height: 2),
                 Text(
                   _isEditMode
-                      ? 'Perbarui informasi menu'
-                      : 'Lengkapi form di bawah untuk menambah menu',
+                      ? 'Perbarui informasi kategori'
+                      : 'Buat kategori baru untuk menu Anda',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: AppColors.textSecondary,
@@ -439,6 +318,76 @@ class _MenuFormPageState extends State<MenuFormPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIconSelector() {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: _availableIcons.map((iconData) {
+        final isSelected = _selectedIcon == iconData['name'];
+        return InkWell(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            setState(() {
+              _selectedIcon = iconData['name'] as String;
+            });
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 70,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              gradient: isSelected
+                  ? AppColors.purpleGradient
+                  : null,
+              color: isSelected ? null : AppColors.gray100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.border,
+                width: isSelected ? 2 : 1,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  iconData['icon'] as IconData,
+                  color: isSelected
+                      ? AppColors.white
+                      : AppColors.gray600,
+                  size: 28,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  iconData['label'] as String,
+                  style: GoogleFonts.poppins(
+                    fontSize: 9,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    color: isSelected
+                        ? AppColors.white
+                        : AppColors.gray600,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 

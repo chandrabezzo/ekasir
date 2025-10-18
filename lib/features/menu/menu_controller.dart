@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../shared/models/product_model.dart';
+import '../category/category_controller.dart';
 
 class MenuManagementController extends GetxController {
   final RxList<ProductModel> _menus = <ProductModel>[].obs;
@@ -14,14 +15,22 @@ class MenuManagementController extends GetxController {
   String get searchQuery => _searchQuery.value;
   String get selectedCategory => _selectedCategory.value;
 
-  // Categories
-  final List<String> categories = [
-    'all',
-    'Food',
-    'Beverage',
-    'Snack',
-    'Dessert',
-  ];
+  // Get categories dynamically from CategoryManagementController
+  List<String> get categories {
+    try {
+      final categoryController = Get.find<CategoryManagementController>();
+      return ['all', ...categoryController.categoryNames];
+    } catch (e) {
+      // Fallback to default categories if controller not found
+      return [
+        'all',
+        'Food',
+        'Beverage',
+        'Snack',
+        'Dessert',
+      ];
+    }
+  }
 
   // Filtered menus based on search and category
   List<ProductModel> get filteredMenus {

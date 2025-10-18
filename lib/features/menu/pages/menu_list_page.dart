@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 
 import '../../../app/constant/app_colors.dart';
 import '../menu_controller.dart' as menu_mgmt;
+import '../../category/category_controller.dart';
+import '../../category/pages/category_list_page.dart';
 import 'menu_form_page.dart';
 
 class MenuListPage extends StatelessWidget {
@@ -15,6 +17,8 @@ class MenuListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure category controller is initialized first
+    Get.put(CategoryManagementController());
     final menuController = Get.put(menu_mgmt.MenuManagementController());
 
     return Scaffold(
@@ -37,6 +41,14 @@ class MenuListPage extends StatelessWidget {
           },
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.category, color: Colors.blue),
+            tooltip: 'Kelola Kategori',
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Get.toNamed(CategoryListPage.routeName);
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.refresh, color: AppColors.primary),
             onPressed: () {
