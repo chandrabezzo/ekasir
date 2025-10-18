@@ -68,3 +68,9 @@ final routes = [
     middlewares: [AuthMiddleware()],
   ),
 ];
+
+// Handle unknown routes for web refresh support
+final unknownRoute = GetPage(
+  name: '/404',
+  page: () => const OrderPage(),
+);
