@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../auth/auth_controller.dart';
+
 class QrGeneratePage extends StatefulWidget {
   const QrGeneratePage({super.key});
 
@@ -16,18 +18,30 @@ class QrGeneratePage extends StatefulWidget {
 class _QrGeneratePageState extends State<QrGeneratePage> {
   // Base URL for self-service
   final String baseUrl = 'https://self-service.kasair.id/';
+  final _authController = Get.find<AuthController>();
 
   // Selected values
   String? _selectedOutlet;
   String? _selectedTable;
 
   // Mock data - In production, fetch from API or database
-  final List<Map<String, String>> _outlets = [
+  final List<Map<String, String>> _allOutlets = [
     {'id': '3307', 'name': 'Outlet 1 - Main Branch'},
     {'id': '3308', 'name': 'Outlet 2 - Downtown'},
     {'id': '3309', 'name': 'Outlet 3 - Mall'},
     {'id': '3310', 'name': 'Outlet 4 - Airport'},
   ];
+
+  // Get outlets accessible to current user
+  List<Map<String, String>> get _outlets {
+    final user = _authController.currentUser;
+    if (user == null) return [];
+    
+    // Filter outlets based on user access
+    return _allOutlets.where((outlet) {
+      return user.hasAccessToOutlet(outlet['id']!);
+    }).toList();
+  }
 
   final List<Map<String, String>> _tables = [
     {'id': '3486', 'name': 'Table 1'},
@@ -48,6 +62,15 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
   }
 
   bool get _canGenerateQr => _selectedOutlet != null && _selectedTable != null;
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-select outlet if user has access to only one
+    if (_outlets.length == 1) {
+      _selectedOutlet = _outlets[0]['id'];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +100,12 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
             // Info Card
             _buildInfoCard(),
             const SizedBox(height: 24),
+
+            // Outlet Access Info (for restricted users)
+            if (_authController.currentUser?.outletIds.isNotEmpty ?? false)
+              _buildOutletAccessInfo(),
+            if (_authController.currentUser?.outletIds.isNotEmpty ?? false)
+              const SizedBox(height: 24),
 
             // Selection Form
             _buildSelectionForm(),
@@ -139,6 +168,56 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
                   'Pilih outlet dan meja untuk generate QR Code',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOutletAccessInfo() {
+    final user = _authController.currentUser;
+    if (user == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [Colors.blue[50]!, Colors.white]),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.blue[100]!),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.blue[100],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(Icons.store, color: Colors.blue[700], size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Akses Outlet Terbatas',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  user.outletName ?? 'Anda hanya dapat mengakses outlet tertentu',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
                     color: Colors.grey[600],
                   ),
                 ),

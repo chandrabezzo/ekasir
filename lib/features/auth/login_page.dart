@@ -330,48 +330,80 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             const SizedBox(height: 12),
-            _buildCredentialRow('Admin', 'admin / admin123'),
+            _buildCredentialRow('Admin', 'admin / admin123', 'Semua Outlet'),
             const SizedBox(height: 6),
-            _buildCredentialRow('Kasir 1', 'kasir1 / kasir123'),
+            _buildCredentialRow('Kasir 1', 'kasir1 / kasir123', 'Outlet 1 Only'),
             const SizedBox(height: 6),
-            _buildCredentialRow('Kasir 2', 'kasir2 / kasir456'),
+            _buildCredentialRow('Kasir 2', 'kasir2 / kasir456', 'Outlet 2 Only'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCredentialRow(String role, String credentials) {
-    return Row(
+  Widget _buildCredentialRow(String role, String credentials, String outletAccess) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 80,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.info.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: AppColors.info.withValues(alpha: 0.3),
-              width: 1,
+        Row(
+          children: [
+            Container(
+              width: 80,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.info.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.info.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                role,
+                style: GoogleFonts.poppins(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.info,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          child: Text(
-            role,
-            style: GoogleFonts.poppins(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: AppColors.info,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    credentials,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.store,
+                        size: 12,
+                        color: AppColors.textSecondary.withValues(alpha: 0.6),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        outletAccess,
+                        style: GoogleFonts.poppins(
+                          fontSize: 10,
+                          color: AppColors.textSecondary.withValues(alpha: 0.7),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          credentials,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: AppColors.textSecondary,
-          ),
+          ],
         ),
       ],
     );

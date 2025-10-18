@@ -16,21 +16,27 @@ class AuthController extends GetxController {
   bool get isLoggedIn => _currentUser.value != null;
 
   // Mock users - Replace with API in production
-  final Map<String, Map<String, String>> _mockUsers = {
+  final Map<String, Map<String, dynamic>> _mockUsers = {
     'admin': {
       'password': _hashPassword('admin123'), // admin123
       'name': 'Admin Cafe',
       'role': 'admin',
+      'outletIds': <String>[], // Empty list = access to all outlets
+      'outletName': null,
     },
     'kasir1': {
       'password': _hashPassword('kasir123'), // kasir123
       'name': 'Kasir 1',
       'role': 'cashier',
+      'outletIds': ['3307'], // Only Outlet 1
+      'outletName': 'Outlet 1 - Main Branch',
     },
     'kasir2': {
       'password': _hashPassword('kasir456'), // kasir456
       'name': 'Kasir 2',
       'role': 'cashier',
+      'outletIds': ['3308'], // Only Outlet 2
+      'outletName': 'Outlet 2 - Downtown',
     },
   };
 
@@ -102,6 +108,10 @@ class AuthController extends GetxController {
         username: username,
         name: user['name']!,
         role: user['role']!,
+        outletIds: user['outletIds'] != null 
+            ? List<String>.from(user['outletIds'] as List)
+            : [],
+        outletName: user['outletName'] as String?,
       );
 
       // Save to storage
