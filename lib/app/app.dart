@@ -1,3 +1,4 @@
+import 'package:ekasir/features/order/order_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -44,7 +45,7 @@ class App extends StatelessWidget {
         },
         title: Strings.appName.tr,
         routeInformationParser: GetInformationParser(
-          initialRoute: controller.initialRoute(),
+          initialRoute: OrderPage.routeName,
         ),
         unknownRoute: unknownRoute,
         initialBinding: AppBinding(),

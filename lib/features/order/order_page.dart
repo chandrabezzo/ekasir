@@ -19,7 +19,7 @@ import '../dashboard/dashboard_page.dart';
 class OrderPage extends GetView<OrderController> {
   const OrderPage({super.key});
 
-  static const String routeName = '/order';
+  static const String routeName = '/';
 
   @override
   Widget build(BuildContext context) {
